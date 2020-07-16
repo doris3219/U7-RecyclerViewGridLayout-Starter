@@ -18,6 +18,7 @@ package com.example.android.dessertclicker
 
 import android.content.ActivityNotFoundException
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -25,14 +26,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import com.example.android.dessertclicker.databinding.ActivityMainBinding
+import timber.log.Timber
+
+//使用這些鍵來保存和檢索實例狀態束中的數據
+const val KEY_REVENUE = "revenue_key"
+const val KEY_DESSERT_SOLD = "dessert_sold_key"
+const val KEY_TIMER_SECONDS = "timer_seconds_key"
 
 class MainActivity : AppCompatActivity() {
 
     private var revenue = 0
     private var dessertsSold = 0
-
+    private lateinit var dessertTimer : DessertTimer;       //為計時器添加一個變量
     // Contains all the views
     private lateinit var binding: ActivityMainBinding
+
 
     /** Dessert Data **/
 
@@ -61,8 +69,9 @@ class MainActivity : AppCompatActivity() {
     )
     private var currentDessert = allDesserts[0]
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {        //創建應用程序
         super.onCreate(savedInstanceState)
+        Timber.i("onCreate Called") //寫入logcat,Timber.i()編寫參考消息,Timber自動使用該類的名稱作為日誌標記
 
         // Use Data Binding to get reference to the views
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -77,6 +86,17 @@ class MainActivity : AppCompatActivity() {
 
         // Make sure the correct dessert is showing
         binding.dessertButton.setImageResource(currentDessert.imageId)
+        dessertTimer = DessertTimer(this.lifecycle)   //創建一個新DessertTimer對象setOnClickListener()，將活動的生命週期對像傳遞給DessertTimer構造函數
+        //dessertTimer.startTimer()       //啟動計時器
+
+        //測試用null確定捆綁包中是否有數據，或者捆綁包是否為null，這反過來會告訴您應用程序是重新啟動還是關閉後重新創建
+        if (savedInstanceState != null) {
+            revenue = savedInstanceState.getInt(KEY_REVENUE, 0)
+            dessertsSold = savedInstanceState.getInt(KEY_DESSERT_SOLD, 0)
+            dessertTimer.secondsCount =
+                    savedInstanceState.getInt(KEY_TIMER_SECONDS, 0)
+            showCurrentDessert()
+        }
     }
 
     /**
@@ -144,5 +164,45 @@ class MainActivity : AppCompatActivity() {
             R.id.shareMenuButton -> onShare()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_REVENUE, revenue)       //revenue使用以下putInt()方法將值（整數）放入包中
+        outState.putInt(KEY_DESSERT_SOLD, dessertsSold)         //與從類似的方法Bundle等類putFloat()和putString()使用兩個參數：用於鍵（字符串KEY_REVENUE常數）和實際值進行保存
+        outState.putInt(KEY_TIMER_SECONDS, dessertTimer.secondsCount)
+        Timber.i("onSaveInstanceState Called")
+    }
+
+    override fun onStart() {            //啟動它並使它在屏幕上可見
+        super.onStart()
+
+        Timber.i("onStart Called")
+    }
+
+    override fun onResume() {           //給予活動重點，並使其準備好與用戶進行交互，當活動具有焦點時將調用該方法，
+        super.onResume()
+        Timber.i("onResume Called")
+    }
+
+    override fun onPause() {                //活動失去焦點時將調用該方法
+        super.onPause()
+        Timber.i("onPause Called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+     //   dessertTimer.stopTimer()            //停止計時器
+        Timber.i("onStop Called")
+    }
+
+    override fun onDestroy() {              //活動關閉，自動清除不在使用的對象
+        super.onDestroy()
+        Timber.i("onDestroy Called")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Timber.i("onRestart Called")
     }
 }
