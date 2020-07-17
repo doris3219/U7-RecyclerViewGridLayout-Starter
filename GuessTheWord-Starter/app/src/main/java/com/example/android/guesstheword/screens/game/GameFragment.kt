@@ -56,54 +56,24 @@ class GameFragment : Fragment() {
         //獲得viewModel,(調用ViewModelProviders.of()方法來創建GameViewModel)
         viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java)
 
-        /** Setting up LiveData observation relationship **/
-        //使用observe()方法，並將代碼放在初始化之後viewModel。使用lambda表達式簡化代碼
-        viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
-            //當觀察LiveData對象保存的數據發生更改時，剛剛創建的觀察者將收到一個事件。在觀察者內部，TextView用新分數更新分數
-            binding.scoreText.text = newScore.toString()
-        })
-
-        /** Setting up LiveData observation relationship **/
-        viewModel.word.observe(viewLifecycleOwner, Observer { newWord ->
-            binding.wordText.text = newWord
-        })
-
         // Observer for the Game finished event
         viewModel.eventGameFinish.observe(viewLifecycleOwner, Observer<Boolean> { hasFinished ->
             if (hasFinished) gameFinished()
         })
 
-        //使用綁定變量binding。在點擊監聽器中，調用方法
-        binding.correctButton.setOnClickListener { onCorrect() }
-        binding.skipButton.setOnClickListener { onSkip() }
-        binding.endGameButton.setOnClickListener { onEndGame() }
 
+        // Set the viewmodel for databinding - this allows the bound layout access
+        // to all the data in the ViewModel
+        binding.gameViewModel = viewModel
+
+        // Specify the fragment view as the lifecycle owner of the binding.
+        // This is used so that the binding can observe LiveData updates
+        binding.lifecycleOwner = viewLifecycleOwner
 
         return binding.root
 
     }
 
-    /**
-     * Resets the list of words and randomizes the order
-     */
-
-    /** Methods for buttons presses **/
-    ////onSkip()方法是“ 跳過”按鈕的單擊處理程序。它將分數降低1，然後使用nextWord()方法顯示下一個單詞
-    private fun onSkip() {
-        viewModel.onSkip()
-    }
-
-    //onCorrect()方法“ 獲得”按鈕的單擊處理程序,答對分數+1
-    private fun onCorrect() {
-        viewModel.onCorrect()
-    }
-
-
-
-    //onEndGame()當用戶點擊“ 結束遊戲”按鈕時，將調用該方法
-    private fun onEndGame() {
-        gameFinished()
-    }
 
     /**
      * Called when the game is finished
