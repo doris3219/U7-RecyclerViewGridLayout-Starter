@@ -22,6 +22,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.android.guesstheword.R
 import com.example.android.guesstheword.databinding.ScoreFragmentBinding
@@ -30,6 +33,10 @@ import com.example.android.guesstheword.databinding.ScoreFragmentBinding
  * Fragment where the final score is shown, after the game is over
  */
 class ScoreFragment : Fragment() {
+
+    //為ScoreViewModel和ScoreViewModelFactory創建類變量
+    private lateinit var viewModel: ScoreViewModel
+    private lateinit var viewModelFactory: ScoreViewModelFactory
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -44,6 +51,28 @@ class ScoreFragment : Fragment() {
                 container,
                 false
         )
+
+        //將參數集的最終得分作為構造函數參數傳遞給ScoreViewModelFactory()
+        viewModelFactory = ScoreViewModelFactory(ScoreFragmentArgs.fromBundle(arguments!!).score)
+
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+                .get(ScoreViewModel::class.java)
+
+        //為得分LiveData對象附加觀察者,並將得分值設置為得分文本視圖
+        viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
+            binding.scoreText.text = newScore.toString()
+        })
+
+        //添加一個Click偵聽器，然後調用
+        binding.playAgainButton.setOnClickListener {  viewModel.onPlayAgain()  }
+
+        // Navigates back to game when button is pressed
+        viewModel.eventPlayAgain.observe(viewLifecycleOwner, Observer { playAgain ->
+            if (playAgain) {
+                findNavController().navigate(ScoreFragmentDirections.actionRestart())
+                viewModel.onPlayAgainComplete()
+            }
+        })
 
         return binding.root
     }
