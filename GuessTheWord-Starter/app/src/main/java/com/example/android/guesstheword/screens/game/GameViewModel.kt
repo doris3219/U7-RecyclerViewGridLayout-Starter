@@ -1,11 +1,19 @@
 package com.example.android.guesstheword.screens.game
 
+import android.os.CountDownTimer
+import android.text.format.DateUtils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 
 class GameViewModel : ViewModel() {
+
+    // Countdown time
+    private val _currentTime = MutableLiveData<Long>()
+    val currentTime: LiveData<Long>
+        get() = _currentTime
 
     //MutableLiveData是一個通用類，因此您需要指定其保存的數據類型
     // The current word
@@ -28,6 +36,24 @@ class GameViewModel : ViewModel() {
     // The list of words - the front of the list is the next word to guess
     private lateinit var wordList: MutableList<String>
 
+    private val timer: CountDownTimer
+
+    //創建一個對companion像以保存計時器常量
+    companion object {
+        // Time when the game is over
+        private const val DONE = 0L
+
+        // Countdown time interval
+        private const val ONE_SECOND = 1000L
+
+        // Total time for the game
+        private const val COUNTDOWN_TIME = 60000L
+    }
+
+    // The String version of the current time
+    val currentTimeString = Transformations.map(currentTime) { time ->
+        DateUtils.formatElapsedTime(time)
+    }
 
     init{
         Log.i("GameViewModel", "GameViewModel created!")
@@ -35,6 +61,18 @@ class GameViewModel : ViewModel() {
         _score.value = 0
         resetList()
         nextWord()
+
+        // Creates a timer which triggers the end of the game when it finishes
+        timer = object : CountDownTimer(COUNTDOWN_TIME, ONE_SECOND) {
+            override fun onTick(millisUntilFinished: Long) {
+                _currentTime.value = millisUntilFinished/ONE_SECOND         //該 millisUntilFinished直到計時器以毫秒為單位完成的時間量。轉換millisUntilFinished為秒並將其分配給_currentTime
+            }
+            override fun onFinish() {       //實施onFinish()以更新_currentTime和触發遊戲結束事件
+                _currentTime.value = DONE
+                onGameFinish()
+            }
+        }
+        timer.start()
     }
 
 
@@ -70,7 +108,7 @@ class GameViewModel : ViewModel() {
      */
     private fun nextWord() {
         if (wordList.isEmpty()) {
-            onGameFinish()
+            resetList()
         }else{
             //Select and remove a word from the list
             _word.value = wordList.removeAt(0)
@@ -95,7 +133,8 @@ class GameViewModel : ViewModel() {
      */
     override fun onCleared() {      //跟踪GameViewModel生命週期
         super.onCleared()
-        Log.i("GameViewModel", "GameViewModel destroyed!")
+        timer.cancel()
+       // Log.i("GameViewModel", "GameViewModel destroyed!")
     }
 
     /** Method for the game completed event **/
