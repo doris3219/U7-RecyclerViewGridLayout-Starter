@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, The Android Open Source Project
+ * Copyright (C) 2019 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-include ':GuessTheWord-Starter'
 
-include ':app'
+package com.example.android.guesstheword
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+
+/**
+ * Creates an Activity that hosts all of the fragments in the app
+ */
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.main_activity)
+    }
+
+}
