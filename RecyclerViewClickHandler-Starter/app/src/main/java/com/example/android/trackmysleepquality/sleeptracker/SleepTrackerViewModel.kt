@@ -246,4 +246,21 @@ class SleepTrackerViewModel(
         super.onCleared()
         viewModelJob.cancel()
     }
+
+    //實施_navigateToSleepDetail。如前所述，private MutableLiveData為導航狀態定義一個。
+    //And a public gettable val to go with it
+    private val _navigateToSleepDetail = MutableLiveData<Long>()
+    val navigateToSleepDetail
+        get() = _navigateToSleepDetail
+
+    //定義onSleepNightClicked()點擊處理函數
+    fun onSleepNightClicked(id: Long) {
+        //_navigateToSleepDetail通過id將點擊的睡眠夜晚設置為傳入來觸發導航
+        _navigateToSleepDetail.value = id
+    }
+
+    //定義在應用程序完成導航後要調用的方法。調用它onSleepDetailNavigated()並將其值設置為null
+    fun onSleepDetailNavigated() {
+        _navigateToSleepDetail.value = null
+    }
 }

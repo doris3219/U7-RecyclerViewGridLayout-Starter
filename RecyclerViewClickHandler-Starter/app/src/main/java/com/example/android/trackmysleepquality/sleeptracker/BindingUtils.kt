@@ -26,19 +26,25 @@ import com.example.android.trackmysleepquality.database.SleepNight
 
 
 @BindingAdapter("sleepDurationFormatted")
-fun TextView.setSleepDurationFormatted(item: SleepNight) {
+fun TextView.setSleepDurationFormatted(item: SleepNight?) {
+    item?.let {
         text = convertDurationToFormatted(item.startTimeMilli, item.endTimeMilli, context.resources)
+    }
 }
 
-
+//在中BindingUtils.kt，對於每個綁定適配器，將item參數的類型更改為nullable
+// 並用包裹正文item?.let{...}
 @BindingAdapter("sleepQualityString")
-fun TextView.setSleepQualityString(item: SleepNight) {
+fun TextView.setSleepQualityString(item: SleepNight?) {
+    item?.let {
         text = convertNumericQualityToString(item.sleepQuality, context.resources)
+    }
 }
 
 
 @BindingAdapter("sleepImage")
-fun ImageView.setSleepImage(item: SleepNight) {
+fun ImageView.setSleepImage(item: SleepNight?) {
+    item?.let {
         setImageResource(when (item.sleepQuality) {
             0 -> R.drawable.ic_sleep_0
             1 -> R.drawable.ic_sleep_1
@@ -50,4 +56,6 @@ fun ImageView.setSleepImage(item: SleepNight) {
             5 -> R.drawable.ic_sleep_5
             else -> R.drawable.ic_sleep_active
         })
+    }
 }
+

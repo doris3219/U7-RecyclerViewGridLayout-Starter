@@ -63,6 +63,8 @@ class SleepTrackerViewModel(
 
     private var tonight = MutableLiveData<SleepNight?>()
 
+    //nights存儲所有睡眠夜晚的變量，該變量是要顯示的數據。
+    // 該nights變量是通過調用設置getAllNights()在數據庫上
     val nights = database.getAllNights()
 
     /**
