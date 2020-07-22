@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.database.SleepDatabase
 import com.example.android.trackmysleepquality.databinding.FragmentSleepTrackerBinding
@@ -68,6 +69,14 @@ class SleepTrackerFragment : Fragment() {
         // To use the View Model with data binding, you have to explicitly
         // give the binding object a reference to it.
         binding.sleepTrackerViewModel = sleepTrackerViewModel
+
+
+        //該GridLayoutManager構造函數使用最多四個參數：上下文，這是activity，數跨度（列，在默認的垂直佈局），方位（默認是垂直的），以及它是否是一個相反佈局（默認為false）
+        val manager = GridLayoutManager(activity, 3,GridLayoutManager.VERTICAL, false)
+        //告訴，RecyclerView以使用this GridLayoutManager
+        //RecyclerView is in the binding object and is called sleepList
+        binding.sleepList.layoutManager = manager
+
 
         //創建一個適配器
         val adapter = SleepNightAdapter()
