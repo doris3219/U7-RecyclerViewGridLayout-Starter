@@ -24,13 +24,15 @@ import com.example.android.trackmysleepquality.convertDurationToFormatted
 import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
 
-
+//@BindingAdapter告知有關此綁定適配器的數據綁定,sleepDurationFormatted是屬性的適配器
 @BindingAdapter("sleepDurationFormatted")
 fun TextView.setSleepDurationFormatted(item: SleepNight) {
+    //將數據綁定到視圖ViewHolder.bind()。通話convertDurationToFormatted()，然後設置text的TextView，以格式化文本
     text = convertDurationToFormatted(item.startTimeMilli, item.endTimeMilli, context.resources)
 }
 
-
+///設置睡眠質量SleepNight。創建一個名為setSleepQualityString()on 的擴展函數TextView，並傳入SleepNight
+///將數據綁定到視圖ViewHolder.bind()。呼叫convertNumericQualityToString並設置text
 @BindingAdapter("sleepQualityString")
 fun TextView.setSleepQualityString(item: SleepNight) {
     text = convertNumericQualityToString(item.sleepQuality, context.resources)

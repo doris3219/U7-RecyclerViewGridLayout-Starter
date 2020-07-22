@@ -69,9 +69,14 @@ class SleepTrackerFragment : Fragment() {
         // give the binding object a reference to it.
         binding.sleepTrackerViewModel = sleepTrackerViewModel
 
+        //創建一個適配器
         val adapter = SleepNightAdapter()
+        //將關聯adapter到RecyclerView
         binding.sleepList.adapter = adapter
 
+        //通過提供片段的viewLifecycleOwner生命週期所有者，可以確保此觀察者僅RecyclerView在屏幕上處於活動狀態時才處於活動狀態
+        //submitList()用於告知ListAdapter列表的新版本可用，ListAdapter差異會將新列表與舊列表進行比較，並檢測添加，刪除，移動或更改的項目
+        //替換adapter.data = it為對的調用adapter.submitList(it)
         sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.submitList(it)

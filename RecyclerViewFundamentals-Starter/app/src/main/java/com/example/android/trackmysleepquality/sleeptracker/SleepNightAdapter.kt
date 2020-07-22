@@ -1,19 +1,3 @@
-/*
- * Copyright 2019, The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.android.trackmysleepquality.sleeptracker
 
 import android.view.LayoutInflater
@@ -27,7 +11,9 @@ import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
 import com.example.android.trackmysleepquality.databinding.ListItemSleepNightBinding
 
+
 class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()) {
+
 
     //onBindViewHolder()方法採用兩個參數：視圖持有者和要綁定的數據的位置。
     // 對於此應用程序，持有人為TextItemViewHolder，位置為列表中的位置
@@ -60,18 +46,14 @@ class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(
         }
     }
 }
+    class SleepNightDiffCallback : DiffUtil.ItemCallback<SleepNight>() {
+        override fun areItemsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+            TODO("Not yet implemented")
+            return oldItem.nightId == newItem.nightId
+        }
 
-
-class SleepNightDiffCallback : DiffUtil.ItemCallback<SleepNight>() {
-
-    override fun areItemsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
-        return oldItem.nightId == newItem.nightId
+        override fun areContentsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+            TODO("Not yet implemented")
+            return oldItem == newItem
+        }
     }
-
-
-    override fun areContentsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
-        return oldItem == newItem
-    }
-
-
-}
